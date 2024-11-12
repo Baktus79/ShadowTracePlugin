@@ -1,0 +1,10 @@
+name: ShadowTrace
+version: '${version}'
+main: no.vestlandetmc.shadowtrace.ShadowTrace
+api-version: '1.21'
+authors: [ Baktus_79 ]
+description: Trace and hunt for x-rayers.
+website: https://www.vestlandetmc.no
+dependencies:
+  - name: CoreProtect
+    required: true
