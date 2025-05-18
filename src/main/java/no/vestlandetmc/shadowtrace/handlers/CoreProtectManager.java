@@ -4,6 +4,7 @@ import lombok.Getter;
 import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;
 import no.vestlandetmc.shadowtrace.ShadowTrace;
+import no.vestlandetmc.shadowtrace.config.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -12,11 +13,11 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 @Getter
 public class CoreProtectManager {
 
@@ -28,22 +29,22 @@ public class CoreProtectManager {
 
 		if (!(plugin instanceof CoreProtect)) {
 			this.coreProtectAPI = null;
-			this.reason = "CoreProtect ble ikke funnet.";
+			this.reason = "CoreProtect was not found.";
 		}
 
 		final CoreProtectAPI coreProtectAPI = ((CoreProtect) plugin).getAPI();
 		if (!coreProtectAPI.isEnabled() || coreProtectAPI.APIVersion() < 10) {
 			this.coreProtectAPI = null;
-			this.reason = "CoreProtect må ha API versjon 10 eller høyere.";
+			this.reason = "CoreProtect requires API version 10 or higher.";
 		} else {
 			this.coreProtectAPI = coreProtectAPI;
-			this.reason = "CoreProtect ble funnet og koblet til.";
+			this.reason = "CoreProtect was found and connected.";
 		}
 	}
 
 	public void findOres(Player player, OfflinePlayer target, String time) {
-		final List<String> username = Arrays.asList(target.getName());
-		final List<Integer> action = Arrays.asList(0);
+		final List<String> username = Collections.singletonList(target.getName());
+		final List<Integer> action = List.of(0);
 
 		final List<Object> blocks = Arrays.asList(
 				Material.COAL_ORE,
@@ -63,15 +64,13 @@ public class CoreProtectManager {
 				Material.DEEPSLATE_IRON_ORE,
 				Material.DEEPSLATE_REDSTONE_ORE);
 
-		final int taskId = Bukkit.getScheduler().runTaskTimer(ShadowTrace.getPlugin(), () -> {
-			MessageHandler.sendAction(player, "&e---------- &6Samler blokkdata &e----------");
-		}, 0L, 40L).getTaskId();
+		final int taskId = Bukkit.getScheduler().runTaskTimer(ShadowTrace.getPlugin(), () -> MessageHandler.sendAction(player, Messages.SRC_ACTION_SEARCH), 0L, 40L).getTaskId();
 
 		Bukkit.getScheduler().runTaskAsynchronously(ShadowTrace.getPlugin(), () -> {
 			final List<String[]> lookup = coreProtectAPI.performLookup(convertToSeconds(time), username, null, blocks, null, action, 0, null);
 			final List<String> messageList = new ArrayList<>();
 
-			for (int i = 0; i < lookup.size() && i < 300; i++) {
+			for (int i = 0; i < lookup.size() && i < 1500; i++) {
 				final String[] result = lookup.get(i);
 				final CoreProtectAPI.ParseResult parseResult = coreProtectAPI.parseResult(result);
 				final long timestamp = parseResult.getTimestamp() / 1000;
@@ -86,28 +85,26 @@ public class CoreProtectManager {
 
 			if (messageList.isEmpty()) {
 				Bukkit.getScheduler().cancelTask(taskId);
-				MessageHandler.sendMessage(player, "&6[&eShadowTrace&6] &cIngen data ble funnet.");
-				MessageHandler.sendAction(player, "&c---------- Ingen data ble funnet ----------");
+				MessageHandler.sendMessage(player, "&6[&eShadowTrace&6] " + Messages.SRC_NO_DATA_FOUND);
+				MessageHandler.sendAction(player, Messages.SRC_ACTION_NO_DATA_FOUND);
 			} else {
 				ShadowTrace.getPacketHandler().sendData(player, messageList);
 				Bukkit.getScheduler().cancelTask(taskId);
-				MessageHandler.sendMessage(player, "&6[&eShadowTrace&6] &eBlokkdata er nå klar for inspeksjon.");
-				MessageHandler.sendAction(player, "&e---------- &6Suksess &e----------");
+				MessageHandler.sendMessage(player, "&6[&eShadowTrace&6] " + Messages.SRC_DATA_FOUND);
+				MessageHandler.sendAction(player, Messages.SRC_ACTION_DATA_FOUND);
 			}
 		});
 	}
 
 	public void findOresNether(Player player, OfflinePlayer target, String time) {
-		final List<String> username = Arrays.asList(target.getName());
-		final List<Integer> action = Arrays.asList(0);
+		final List<String> username = Collections.singletonList(target.getName());
+		final List<Integer> action = List.of(0);
 
 		final List<Object> blocks = Arrays.asList(
 				Material.ANCIENT_DEBRIS,
 				Material.NETHER_GOLD_ORE);
 
-		final int taskId = Bukkit.getScheduler().runTaskTimer(ShadowTrace.getPlugin(), () -> {
-			MessageHandler.sendAction(player, "&e---------- &6Samler blokkdata &e----------");
-		}, 0L, 40L).getTaskId();
+		final int taskId = Bukkit.getScheduler().runTaskTimer(ShadowTrace.getPlugin(), () -> MessageHandler.sendAction(player, "&e---------- &6Samler blokkdata &e----------"), 0L, 40L).getTaskId();
 
 		Bukkit.getScheduler().runTaskAsynchronously(ShadowTrace.getPlugin(), () -> {
 			final List<String[]> lookup = coreProtectAPI.performLookup(convertToSeconds(time), username, null, blocks, null, action, 0, null);
@@ -128,13 +125,13 @@ public class CoreProtectManager {
 
 			if (messageList.isEmpty()) {
 				Bukkit.getScheduler().cancelTask(taskId);
-				MessageHandler.sendMessage(player, "&6[&eShadowTrace&6] &cIngen data ble funnet.");
-				MessageHandler.sendAction(player, "&c---------- Ingen data ble funnet ----------");
+				MessageHandler.sendMessage(player, "&6[&eShadowTrace&6] " + Messages.SRC_NO_DATA_FOUND);
+				MessageHandler.sendAction(player, Messages.SRC_ACTION_NO_DATA_FOUND);
 			} else {
 				ShadowTrace.getPacketHandler().sendData(player, messageList);
 				Bukkit.getScheduler().cancelTask(taskId);
-				MessageHandler.sendMessage(player, "&6[&eShadowTrace&6] &eBlokkdata er nå klar for inspeksjon.");
-				MessageHandler.sendAction(player, "&e---------- &6Suksess &e----------");
+				MessageHandler.sendMessage(player, "&6[&eShadowTrace&6] " + Messages.SRC_DATA_FOUND);
+				MessageHandler.sendAction(player, Messages.SRC_ACTION_DATA_FOUND);
 			}
 		});
 	}

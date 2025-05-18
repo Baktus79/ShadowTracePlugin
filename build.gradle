@@ -1,37 +1,25 @@
 plugins {
     id 'java'
-    id 'io.github.goooler.shadow' version '8.1.8'
-    id 'io.freefair.lombok' version '8.10.2'
+    id 'io.freefair.lombok' version '8.13.1'
 }
 
 group = 'no.vestlandetmc'
-version = '1.0.2'
+version = '1.0.3'
 
 repositories {
     mavenCentral()
     maven { url 'https://repo.papermc.io/repository/maven-public/' }
     maven { url 'https://oss.sonatype.org/content/repositories/public' }
-    maven { url 'https://repo.aikar.co/content/groups/aikar/' }
     maven { url 'https://maven.playpro.com' }
 }
 
 dependencies {
-    compileOnly 'io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT'
+    compileOnly 'io.papermc.paper:paper-api:1.21.5-R0.1-SNAPSHOT'
     compileOnly 'net.coreprotect:coreprotect:22.4'
-    implementation 'co.aikar:acf-paper:0.5.1-SNAPSHOT'
 }
-
-shadowJar {
-    relocate 'co.aikar.commands', 'no.vestlandetmc.shadowtrace.acf'
-    relocate 'co.aikar.locales', 'no.vestlandetmc.shadowtrace.locales'
-
-    archiveFileName.set('ShadowTrace.jar')
-}
-
-jar.dependsOn shadowJar
 
 jar {
-    enabled = false
+    archiveFileName.set('ShadowTrace.jar')
 }
 
 def targetJavaVersion = 21

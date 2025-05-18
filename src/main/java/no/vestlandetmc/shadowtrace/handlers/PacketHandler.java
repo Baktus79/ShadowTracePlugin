@@ -29,8 +29,8 @@ public class PacketHandler {
 
 			for (String message : messageList) {
 				byte[] bytes = message.getBytes(StandardCharsets.UTF_8);
-				out.writeInt(bytes.length); // Lengden på strengen
-				out.write(bytes);            // Selve strengen som bytes
+				out.writeInt(bytes.length);
+				out.write(bytes);
 			}
 
 			player.sendPluginMessage(plugin, channel, byteStream.toByteArray());

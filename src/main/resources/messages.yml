@@ -1,0 +1,12 @@
+shadowtrace-command:
+  only-player-usage: '&cThis command can only be used by a player.'
+  invalid-argument: '&cUsage: /shadowtrace getores <player> <time>'
+  no-permission: '&cYou do not have permission to use this command.'
+  invalid-player: '&cPlayer not found.'
+  no-ores-world: 'No ores where found in this world.'
+search:
+  actionbar-search: '&e---------- &6Collecting block data &e----------'
+  no-data-found: '&cNo data was found.'
+  actionbar-no-data-found: '&c---------- No data was found ----------'
+  data-found: '&eBlock data is now ready for inspection.'
+  actionbar-data-found: '&e---------- &6Success &e----------'
