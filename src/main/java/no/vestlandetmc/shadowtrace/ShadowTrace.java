@@ -36,8 +36,8 @@ public final class ShadowTrace extends JavaPlugin {
 
 		this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, cmd -> {
 			cmd.registrar().register(
-					"limbo",
-					"Place a player in limbo.",
+					"shadowtrace",
+					"Trace blocks.",
 					List.of("strace"),
 					new ShadowTraceCommand());
 		});

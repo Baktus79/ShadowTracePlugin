@@ -1,9 +1,12 @@
 shadowtrace-command:
   only-player-usage: '&cThis command can only be used by a player.'
-  invalid-argument: '&cUsage: /shadowtrace getores <player> <time>'
+  invalid-argument-getores: '&cUsage: /shadowtrace getores <player> <time>'
+  invalid-argument-blocks: '&cUsage: /shadowtrace blocks <player> <time> <blockid>'
   no-permission: '&cYou do not have permission to use this command.'
   invalid-player: '&cPlayer not found.'
-  no-ores-world: 'No ores where found in this world.'
+  no-ores-world: '&cNo ores where found in this world.'
+  invalid-blocks: '&cNo valid blocks in the argument.'
+  no-blocks-found: '&cNo blocks where found in this world.'
 search:
   actionbar-search: '&e---------- &6Collecting block data &e----------'
   no-data-found: '&cNo data was found.'

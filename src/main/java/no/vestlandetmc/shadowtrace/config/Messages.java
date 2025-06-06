@@ -4,10 +4,13 @@ public class Messages extends ConfigHandler {
 
 	public static String
 			SHTC_ONLY_PLAYER,
-			SHTC_INVALID_ARG,
+			SHTC_INVALID_ARG_GETORES,
+			SHTC_INVALID_ARG_BLOCKS,
 			SHTC_NO_PERM,
 			SHTC_INVALID_PLAYER,
 			SHTC_NO_ORES,
+			SHTC_NO_VALID_BLOCKS,
+			SHTC_NO_BLOCKS_FOUND,
 			SRC_ACTION_SEARCH,
 			SRC_NO_DATA_FOUND,
 			SRC_ACTION_NO_DATA_FOUND,
@@ -45,10 +48,13 @@ public class Messages extends ConfigHandler {
 	private void onLoad() {
 
 		SHTC_ONLY_PLAYER = getString("shadowtrace-command.only-player-usage");
-		SHTC_INVALID_ARG = getString("shadowtrace-command.invalid-argument");
+		SHTC_INVALID_ARG_GETORES = getString("shadowtrace-command.invalid-argument-getores");
+		SHTC_INVALID_ARG_BLOCKS = getString("shadowtrace-command.invalid-argument-blocks");
 		SHTC_NO_PERM = getString("shadowtrace-command.no-permission");
 		SHTC_INVALID_PLAYER = getString("shadowtrace-command.invalid-player");
 		SHTC_NO_ORES = getString("shadowtrace-command.no-ores-world");
+		SHTC_NO_VALID_BLOCKS = getString("shadowtrace-command.invalid-blocks");
+		SHTC_NO_BLOCKS_FOUND = getString("shadowtrace-command.no-blocks-found");
 		SRC_ACTION_SEARCH = getString("search.actionbar-search");
 		SRC_NO_DATA_FOUND = getString("search.no-data-found");
 		SRC_ACTION_NO_DATA_FOUND = getString("search.actionbar-no-data-found");

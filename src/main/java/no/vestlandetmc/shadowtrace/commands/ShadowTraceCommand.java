@@ -6,16 +6,17 @@ import no.vestlandetmc.shadowtrace.ShadowTrace;
 import no.vestlandetmc.shadowtrace.config.Messages;
 import no.vestlandetmc.shadowtrace.handlers.MessageHandler;
 import no.vestlandetmc.shadowtrace.handlers.Permissions;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 @SuppressWarnings("UnstableApiUsage")
@@ -29,46 +30,78 @@ public class ShadowTraceCommand implements BasicCommand {
 		}
 
 		if (args.length == 0) {
-			MessageHandler.sendMessage(player, Messages.SHTC_INVALID_ARG);
+			MessageHandler.sendMessage(player, Messages.SHTC_INVALID_ARG_GETORES);
 			return;
 		}
 
-		if (args[0].equals("getores")) {
-			if (!player.hasPermission(Permissions.SHT_COMMAND_GETORES)) {
-				MessageHandler.sendMessage(player, Messages.SHTC_NO_PERM);
-				return;
+		switch (args[0]) {
+			case "getores" -> {
+				if (args.length < 3) {
+					MessageHandler.sendMessage(player, Messages.SHTC_INVALID_ARG_GETORES);
+				} else {
+					final String targetName = args[1];
+					final String time = args[2];
+					final OfflinePlayer targetPlayer = Bukkit.getOfflinePlayerIfCached(targetName);
+
+					if (targetPlayer == null) {
+						MessageHandler.sendMessage(player, Messages.SHTC_INVALID_PLAYER);
+						return;
+					}
+
+					final World.Environment env = player.getWorld().getEnvironment();
+					if (env == World.Environment.NETHER) {
+						ShadowTrace.getCoreProtectManager().findOresNether(player, targetPlayer, time);
+					} else if (env == World.Environment.NORMAL) {
+						ShadowTrace.getCoreProtectManager().findOres(player, targetPlayer, time);
+					} else {
+						MessageHandler.sendMessage(player, Messages.SHTC_NO_ORES);
+					}
+				}
 			}
+			case "teleport" -> {
+				if (args.length >= 4) {
+					final double x = Double.parseDouble(args[1]);
+					final double y = Double.parseDouble(args[2]);
+					final double z = Double.parseDouble(args[3]);
 
-			if (args.length < 3) {
-				MessageHandler.sendMessage(player, Messages.SHTC_INVALID_ARG);
-				return;
+					final Location loc = new Location(player.getWorld(), x, y, z);
+					player.teleport(loc, PlayerTeleportEvent.TeleportCause.COMMAND);
+				}
 			}
-		}
+			case "blocks" -> {
+				if (args.length < 4) {
+					MessageHandler.sendMessage(player, Messages.SHTC_INVALID_ARG_BLOCKS);
+				} else {
+					final String targetName = args[1];
+					final String time = args[2];
+					final List<Object> blocks = Arrays.stream(args[3].split(",")).map(Material::matchMaterial).filter(Objects::nonNull).filter(Material::isSolid).map(m -> (Object) m).toList();
+					final OfflinePlayer targetPlayer = Bukkit.getOfflinePlayerIfCached(targetName);
 
-		final String targetName = args[1];
-		final String time = args[2];
-		final OfflinePlayer targetPlayer = Bukkit.getOfflinePlayerIfCached(targetName);
+					if (targetPlayer == null) {
+						MessageHandler.sendMessage(player, Messages.SHTC_INVALID_PLAYER);
+						return;
+					}
 
-		if (targetPlayer == null) {
-			MessageHandler.sendMessage(player, Messages.SHTC_INVALID_PLAYER);
-			return;
-		}
+					if (blocks.isEmpty()) {
+						MessageHandler.sendMessage(player, Messages.SHTC_NO_VALID_BLOCKS);
+						return;
+					}
 
-		final World.Environment env = player.getWorld().getEnvironment();
-		if (env == World.Environment.NETHER) {
-			ShadowTrace.getCoreProtectManager().findOresNether(player, targetPlayer, time);
-		} else if (env == World.Environment.NORMAL) {
-			ShadowTrace.getCoreProtectManager().findOres(player, targetPlayer, time);
-		} else {
-			MessageHandler.sendMessage(player, Messages.SHTC_NO_ORES);
+					ShadowTrace.getCoreProtectManager().findBlocks(player, targetPlayer, time, blocks);
+				}
+			}
 		}
 	}
 
 	@Override
 	public @NotNull Collection<String> suggest(@NotNull CommandSourceStack commandSourceStack, String @NotNull [] args) {
-		if (args.length == 1) {
-			return Stream.of("getores")
-					.filter(s -> s.startsWith(args[0].toLowerCase()))
+		final List<String> subs = List.of("getores", "blocks");
+
+		if (args.length == 0) {
+			return subs;
+		} else if (args.length == 1) {
+			return subs.stream()
+					.filter(s -> s.startsWith(args[0].toLowerCase()) || args[0].isEmpty())
 					.toList();
 		} else if (args.length == 2) {
 			return Bukkit.getOnlinePlayers().stream()
