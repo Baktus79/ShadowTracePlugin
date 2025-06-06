@@ -6,6 +6,7 @@ body:
     attributes:
       value: |
         This page is intended to help us resolve issues with ShadowTracePlugin as quickly and efficiently as possible. Please take a moment to fill out this form thoroughly and accurately.
+        
         **Note**: If you are experiencing multiple unrelated issues, consider creating a separate report for each one.
   - type: textarea
     id: description-of-issue
